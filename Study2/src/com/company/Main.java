@@ -35,5 +35,12 @@ public class Main {
         System.out.println("a * b = " + (a * b));
         System.out.println("a / b = " + (a / b)); // 몫만 출력됨
 
+        int c = (int) 0.5;
+        System.out.println((c)); // 실수를 넣으면 정수부만 들어감
+
+        // 반올림 하는 법 : 실수에 0.5를 더하고 int로 형변환 하면 됨
+        double d = 0.5;
+        int e = (int) (d + 0.5);
+        System.out.println((e));
     }
 }
