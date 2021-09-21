@@ -4,3 +4,5 @@ BankTransaction.java
  BankTransaction
 BankTransactionAnalyzerSimple.java
  BankTransactionAnalyzerSimple
+BankStatementProcessor.java
+ BankStatementProcessor
