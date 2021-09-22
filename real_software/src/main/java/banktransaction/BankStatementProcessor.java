@@ -1,5 +1,9 @@
+package banktransaction;
+
+import banktransaction.functionalinterfaces.BankTransactionFilter;
+import banktransaction.functionalinterfaces.BankTransactionSummarizer;
+
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

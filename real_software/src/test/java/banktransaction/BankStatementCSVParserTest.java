@@ -1,3 +1,7 @@
+package banktransaction;
+
+import banktransaction.parser.BankStatementCSVParser;
+import banktransaction.parser.BankStatementParser;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

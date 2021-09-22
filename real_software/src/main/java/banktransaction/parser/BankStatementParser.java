@@ -1,3 +1,7 @@
+package banktransaction.parser;
+
+import banktransaction.BankTransaction;
+
 import java.util.List;
 
 public interface BankStatementParser {
