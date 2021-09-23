@@ -1,6 +1,4 @@
-package importer;
-
-import domain.Document;
+package com.example;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -9,7 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static domain.Attributes.*;
+import static com.example.Attributes.*;
 
 public class ImageImporter implements Importer {
     @Override

@@ -1,6 +1,4 @@
-package importer;
-
-import domain.Document;
+package com.example;
 
 import java.io.File;
 import java.io.IOException;
