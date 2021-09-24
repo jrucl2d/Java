@@ -5,9 +5,11 @@ import java.util.List;
 
 public class BusinessRoleEngine {
     private final List<Action> actions;
+    private final Facts facts;
 
-    public BusinessRoleEngine() {
+    public BusinessRoleEngine(final Facts facts) {
         this.actions = new ArrayList<>();
+        this.facts = facts;
     }
 
     public void addAction(final Action action) {
@@ -19,6 +21,6 @@ public class BusinessRoleEngine {
     }
 
     public void run() {
-        this.actions.forEach(Action::perform);
+        this.actions.forEach(action -> action.perform(facts));
     }
 }
