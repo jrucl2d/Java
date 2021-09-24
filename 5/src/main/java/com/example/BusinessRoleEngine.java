@@ -4,23 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BusinessRoleEngine {
-    private final List<Action> actions;
+    private final List<Rule> rules;
     private final Facts facts;
 
     public BusinessRoleEngine(final Facts facts) {
-        this.actions = new ArrayList<>();
+        this.rules = new ArrayList<>();
         this.facts = facts;
     }
 
-    public void addAction(final Action action) {
-        this.actions.add(action);
+    public void addRule(final Rule rule) {
+        this.rules.add(rule);
     }
 
     public int count() {
-        return this.actions.size();
+        return this.rules.size();
     }
 
     public void run() {
-        this.actions.forEach(action -> action.perform(facts));
+        this.rules.forEach(action -> action.perform(facts));
     }
 }

@@ -2,7 +2,6 @@ package com.example;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class BusinessRoleEngineTest {
@@ -16,6 +15,6 @@ class BusinessRoleEngineTest {
         businessRoleEngine.addAction(mockAction);
         businessRoleEngine.run();
 
-        verify(mockAction).perform(mockFacts);
+        verify(mockAction).execute(mockFacts);
     }
 }
