@@ -1,4 +1,5 @@
 package com.example;
 
-public class ReceiverEndPoint {
+public interface ReceiverEndPoint {
+    void onTwoot(Twoot twoot);
 }
