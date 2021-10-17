@@ -6,6 +6,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,6 +61,32 @@ class Part03StepVerifierTest {
                 .thenAwait(Duration.ofHours(1)) // 그 뒤 한 시간 대기
                 .expectNextCount(1) // 데이터 하나
                 .verifyComplete();
+    }
+
+    // Flux 혹은 Mono 에서 map 이라는 메소드를 사용해서 transform 할 수 있다.
+    @Test
+    void name5() {
+        StepVerifier.create(Mono.just("hello").map(s -> s.toUpperCase(Locale.ROOT)))
+                .expectNext("HELLO")
+                .verifyComplete();
+
+        StepVerifier.create(Flux.just(new User("haha"))
+                        .map(u -> new User(u.getUsername().toUpperCase(Locale.ROOT))))
+                .assertNext(u -> assertThat(u.getUsername()).isEqualTo("HAHA"))
+                .verifyComplete();
+    }
+
+    // 비동기적으로 실행하므로 map 처리보다 더 빠른 flatMap 사용
+    @Test
+    void name6() {
+        StepVerifier.create(Flux.just(new User("hihi"))
+                .flatMap(this::asyncCapitalizeUser))
+                .assertNext(u -> assertThat(u.getUsername()).isEqualTo("HIHI"))
+                .verifyComplete();
+    }
+
+    Mono<User> asyncCapitalizeUser(User u) {
+        return Mono.just(new User(u.getUsername().toUpperCase(Locale.ROOT)));
     }
 
     static class User {
