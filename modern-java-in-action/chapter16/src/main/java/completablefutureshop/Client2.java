@@ -3,6 +3,9 @@ package completablefutureshop;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.stream.Collectors;
 
 public class Client2 {
@@ -19,10 +22,21 @@ public class Client2 {
     }
 
     public static List<String> findPrices(String product) {
+        final Executor executor =
+                Executors.newFixedThreadPool(Math.min(shops.size(), 100),
+                        new ThreadFactory() {
+                            @Override
+                            public Thread newThread(Runnable r) {
+                                Thread t = new Thread(r);
+                                t.setDaemon(true); // 프로그램 종료를 방해하지 않는 데몬 스레드 사용
+                                return t;
+                            }
+                        });
+
         List<CompletableFuture<String>> priceFutures = shops.stream()
                 .map(shop -> CompletableFuture.supplyAsync(
                         () -> String.format("%s price is %.2f",
-                                shop.getName(), shop.getPrice("product"))
+                                shop.getName(), shop.getPrice(product), executor)
                 )).collect(Collectors.toList());
 
         return priceFutures.stream()
