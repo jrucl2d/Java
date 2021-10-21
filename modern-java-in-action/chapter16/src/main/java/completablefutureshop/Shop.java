@@ -11,8 +11,11 @@ public class Shop {
         this.name = name;
     }
 
-    public double getPrice(String product) {
-        return calculatePrice(product);
+    public String getPrice(String product) {
+        double price = calculatePrice(product);
+        Discount.Code code = Discount.Code.values() [
+                new Random().nextInt(Discount.Code.values().length)];
+        return String.format("%s:%.2f:%s", name, price, code);
     }
 
     public Future<Double> getPriceAsync(String product) {
