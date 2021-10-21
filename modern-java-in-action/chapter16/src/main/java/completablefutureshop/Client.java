@@ -4,7 +4,7 @@ import java.util.concurrent.Future;
 
 public class Client {
     public static void main(String[] args) {
-        Shop shop = new Shop();
+        Shop shop = new Shop("shop");
         long start = System.nanoTime();
         Future<Double> futurePrice = shop.getPriceAsync("my favorite product");
         long invocationTime = ((System.nanoTime() - start) / 1_000_000);
