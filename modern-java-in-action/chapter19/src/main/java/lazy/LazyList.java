@@ -1,5 +1,6 @@
 package lazy;
 
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class LazyList<T> implements MyList<T> {
@@ -9,6 +10,21 @@ public class LazyList<T> implements MyList<T> {
     public LazyList(T head, Supplier<MyList<T>> tail) {
         this.head = head;
         this.tail = tail;
+    }
+
+    public MyList<T> filter(Predicate<T> p) {
+        return isEmpty() ?
+                this :
+                p.test(head()) ?
+                        new LazyList<>(head(), () -> tail().filter(p)) :
+                        tail().filter(p);
+    }
+
+    public static <T> void printAll(MyList<T> list) {
+        if (list.isEmpty())
+            return;
+        System.out.println(list.head());
+        printAll(list.tail());
     }
 
     @Override
