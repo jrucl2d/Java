@@ -17,4 +17,8 @@ public class TrainJourney {
         t.onward = b;
         return a;
     }
+
+    public static TrainJourney append(TrainJourney a, TrainJourney b) {
+        return a == null ? b : new TrainJourney(a.price, append(a.onward, b));
+    }
 }
