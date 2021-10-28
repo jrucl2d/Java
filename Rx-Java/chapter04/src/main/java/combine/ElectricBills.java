@@ -30,21 +30,21 @@ public class ElectricBills {
                 double series3 = Math.min(0, Math.max(val - 400, 0)) * 280.65;
                 return (int)(series1 + series2 + series3);
             });
-
-        Observable<Integer> source = Observable.zip(
-            basePrice,
-            usagePrice,
-            Observable.fromArray(data),
-            (v1, v2, i) -> Pair.of(i, v1 + v2)
-        );
-
-        source.map(val -> Pair.of(val.getLeft(),
-                new DecimalFormat("#,###").format(val)))
-            .subscribe(val -> {
-                StringBuilder sb = new StringBuilder();
-                sb.append("Usage : " + val.getLeft() + " kWh => ");
-                sb.append("Price : " + val.getRight() + "원");
-                Log.i(sb.toString());
-            });
+//
+//        Observable<Integer> source = Observable.zip(
+//            basePrice,
+//            usagePrice,
+//            Observable.fromArray(data),
+//            (v1, v2, i) -> Pair.of(i, v1 + v2)
+//        );
+//
+//        source.map(val -> Pair.of(val.getLeft(),
+//                new DecimalFormat("#,###").format(val)))
+//            .subscribe(val -> {
+//                StringBuilder sb = new StringBuilder();
+//                sb.append("Usage : " + val.getLeft() + " kWh => ");
+//                sb.append("Price : " + val.getRight() + "원");
+//                Log.i(sb.toString());
+//            });
     }
 }

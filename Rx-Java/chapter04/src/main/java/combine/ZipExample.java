@@ -34,5 +34,12 @@ public class ZipExample {
         CommonUtils.exampleStart();
         source.subscribe(Log::it);
         CommonUtils.sleep(1000);
+
+        Observable.zip(
+            Observable.just(100, 200, 300),
+            Observable.just(10, 20, 30),
+            (a, b) -> a + b
+        ).zipWith(Observable.just(1, 2, 3), (ab, c) -> ab + c)
+            .subscribe(Log::i);
     }
 }
