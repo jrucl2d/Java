@@ -1,14 +1,14 @@
 package utils;
 
 public class Shape {
-    private static final String HEXAGON = "HEXAGON";
-    private static final String OCTAGON = "OCTAGON";
-    private static final String RECTANGLE = "RECTANGLE";
-    private static final String TRIANGLE = "TRIANGLE";
-    private static final String DIAMOND = "DIAMOND";
-    private static final String PENTAGON = "PENTAGON";
-    private static final String BALL = "BALL";
-    private static final String STAR = "STAR";
+    public static final String HEXAGON = "HEXAGON";
+    public static final String OCTAGON = "OCTAGON";
+    public static final String RECTANGLE = "RECTANGLE";
+    public static final String TRIANGLE = "TRIANGLE";
+    public static final String DIAMOND = "DIAMOND";
+    public static final String PENTAGON = "PENTAGON";
+    public static final String BALL = "BALL";
+    public static final String STAR = "STAR";
 
     public static String getColor(String shape) {
         if (shape.endsWith("<>")) {
