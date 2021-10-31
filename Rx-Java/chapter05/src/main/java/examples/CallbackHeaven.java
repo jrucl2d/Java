@@ -11,13 +11,16 @@ public class CallbackHeaven {
 
     public static void main(String[] args) {
         CommonUtils.exampleStart();
-        Observable<String> source = Observable.just(FIRST_URL)
+        Observable<String> first = Observable.just(FIRST_URL)
                         .subscribeOn(Schedulers.io())
-                        .map(OkHttpClient::get)
-                        .concatWith(Observable.just(SECOND_URL) // 현재의 Observable 에 인자의 Observable 을 결합
-                                .map(OkHttpClient::get));
+                        .map(OkHttpClient::get);
 
-        source.subscribe(Log::it);
+        Observable<String> second = Observable.just(SECOND_URL)
+                .subscribeOn(Schedulers.io())
+                .map(OkHttpClient::get);
+
+        Observable.zip(first, second, (a, b) -> ("\n>> " + a + "\n>>" + b))
+                        .subscribe(Log::it);
         CommonUtils.sleep(5000);
     }
 }
