@@ -4,6 +4,7 @@ import java.util.Random;
 
 public class CommonUtils {
     public static long startTime;
+    private static final String ALPHABET = "ABCDEFGHIZKLMNOPQRSTUVWXYZ";
 
     public static void exampleStart() {
         startTime = System.currentTimeMillis();
@@ -33,5 +34,9 @@ public class CommonUtils {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String numberToAlphabet(long x) {
+        return Character.toString(ALPHABET.charAt((int)x % ALPHABET.length()));
     }
 }
