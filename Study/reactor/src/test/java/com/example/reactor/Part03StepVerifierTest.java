@@ -90,6 +90,8 @@ class Part03StepVerifierTest {
     }
 
     static class User {
+        public static final User SKYLER = new User("Skyler");
+        public static final User JESSE = new User("Jesse");
         private String username;
 
         public User(String username) {
