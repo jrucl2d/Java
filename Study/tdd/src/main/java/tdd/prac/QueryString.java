@@ -1,25 +1,30 @@
 package tdd.prac;
 
+import java.util.HashMap;
+
 public class QueryString {
-    private String query;
+    private HashMap<String, String> map = new HashMap<>();
 
     public QueryString(String queryString) {
         if (queryString == null) throw new NullPointerException();
-        this.query = queryString;
+        parseQueryString(queryString);
     }
 
     public int count() {
-        if ("".equals(query)) return 0;
-        String[] pairs = query.split("&");
-        return pairs.length;
+        return map.size();
     }
 
     public String valueFor(String name) {
+        return map.get(name);
+    }
+
+    private void parseQueryString(String query) {
+        if ("".equals(query)) return;
+
         String[] pairs = query.split("&");
         for (String pair: pairs) {
             String[] nameAndValue = pair.split("=");
-            if (nameAndValue[0].equals(name)) return nameAndValue[1];
+            map.put(nameAndValue[0], nameAndValue[1]);
         }
-        return null;
     }
 }
