@@ -10,6 +10,16 @@ public class QueryString {
 
     public int count() {
         if ("".equals(query)) return 0;
-        return 1;
+        String[] pairs = query.split("&");
+        return pairs.length;
+    }
+
+    public String valueFor(String name) {
+        String[] pairs = query.split("&");
+        for (String pair: pairs) {
+            String[] nameAndValue = pair.split("=");
+            if (nameAndValue[0].equals(name)) return nameAndValue[1];
+        }
+        return null;
     }
 }
