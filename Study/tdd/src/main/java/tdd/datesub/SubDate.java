@@ -33,4 +33,15 @@ public class SubDate {
         if (isLeap && month > 2) result += 1;
         return result;
     }
+
+    public static int getTotalDay(String date) {
+        int year = Integer.parseInt(date.substring(0, 4));
+        int month = Integer.parseInt(date.substring(4, 6));
+        int day = Integer.parseInt(date.substring(6, 8));
+        return getYearDay(year) + getMonthDay(month, isLeapYear(year)) + day;
+    }
+
+    public static int sub(String date1, String date2) {
+        return getTotalDay(date2) - getTotalDay(date1);
+    }
 }

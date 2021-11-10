@@ -29,4 +29,18 @@ class SubDateTest {
         assertThat(SubDate.getMonthDay(3, false)).isEqualTo(31 + 28);
         assertThat(SubDate.getMonthDay(3, true)).isEqualTo(31 + 29);
     }
+
+    @Test
+    void testGetTotalDay() {
+        assertThat(SubDate.getTotalDay("00010101")).isEqualTo(1);
+        assertThat(SubDate.getTotalDay("00020101")).isEqualTo(365 + 1);
+    }
+
+    @Test
+    void testSubDate() {
+        assertThat(SubDate.sub("20061231", "20070101")).isOne();
+        assertThat(SubDate.sub("20070101", "20070515")).isEqualTo(31 + 28 + 30 + 31 + 14);
+        assertThat(SubDate.sub("20080101", "20080515")).isEqualTo(31 + 29 + 30 + 31 + 14);
+
+    }
 }
