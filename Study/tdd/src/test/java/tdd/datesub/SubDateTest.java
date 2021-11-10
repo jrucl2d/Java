@@ -21,4 +21,12 @@ class SubDateTest {
         assertThat(SubDate.isLeapYear(1200)).isTrue();
         assertThat(SubDate.isLeapYear(700)).isFalse();
     }
+
+    @Test
+    void testGetMonthDay() {
+        assertThat(SubDate.getMonthDay(1, true)).isZero();
+        assertThat(SubDate.getMonthDay(2, false)).isEqualTo(31);
+        assertThat(SubDate.getMonthDay(3, false)).isEqualTo(31 + 28);
+        assertThat(SubDate.getMonthDay(3, true)).isEqualTo(31 + 29);
+    }
 }
