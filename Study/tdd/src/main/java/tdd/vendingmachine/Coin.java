@@ -1,12 +1,15 @@
 package tdd.vendingmachine;
 
+import java.util.List;
+
 public class Coin
 {
+    private static final List<Integer> POSSIBLE_COIN_VALUES = List.of(50, 100, 500);
     private final int value;
 
     public Coin(int value)
     {
-        if (!(value == 50 || value == 100 || value == 500))
+        if (!POSSIBLE_COIN_VALUES.contains(value))
             throw new IllegalArgumentException();
         this.value = value;
     }
