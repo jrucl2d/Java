@@ -1,5 +1,6 @@
 package tdd.stringcalculator;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -33,5 +34,12 @@ class StringCalculatorTest {
     void name3() {
         assertThat(StringCalculator.splitAndSum("1,2;4")).isEqualTo(7);
         assertThat(StringCalculator.splitAndSum("44;3;2,1,3")).isEqualTo(44 + 3 + 2 + 1 + 3);
+    }
+
+    @Test
+    @DisplayName("숫자 이외의 값 혹은 음수 넣으면 RuntimeException 발생")
+    void name4() {
+        Assertions.assertThrows(RuntimeException.class, () -> StringCalculator.splitAndSum("-1,234,5"));
+        Assertions.assertThrows(RuntimeException.class, () -> StringCalculator.splitAndSum("1,육칠,5"));
     }
 }
