@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class VendingMachineCoinTest
@@ -85,5 +88,19 @@ class VendingMachineCoinTest
         assertThat(fifty).isEqualTo(50);
         assertThat(oneFifty).isEqualTo(150);
         assertThat(sixFifty).isEqualTo(650);
+    }
+
+    @Test
+    @DisplayName("자판기 내부에 존재하는 모든 동전 가격을 확인할 수 있다.")
+    void name3()
+    {
+        // given
+        VendingMachine vendingMachine = new VendingMachine(new ArrayList<>(), List.of(50, 50, 100, 500));
+
+        // when
+        int totalCoinValue = vendingMachine.getTotalCoinValue();
+
+        // then
+        assertThat(totalCoinValue).isEqualTo(50 + 50 + 100 + 500);
     }
 }

@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -87,5 +88,17 @@ class VendingMachineCreateTest
 
         // then
         assertThat(allDrinks).isEmpty();
+    }
+
+    @Test
+    @DisplayName("잔돈이 든 자판기를 생성할 수 있다.")
+    void name4()
+    {
+        // given
+        VendingMachine vendingMachine = new VendingMachine(new ArrayList<>(), List.of(50, 100, 500));
+
+        // when
+        // then
+        assertThat(vendingMachine).isNotNull();
     }
 }
