@@ -49,7 +49,7 @@ class VendingMachineCoinTest
 
         // when
         vendingMachine.insertCoin(coin);
-        int insertedCoin = vendingMachine.getInsertedCoin();
+        int insertedCoin = vendingMachine.getInsertedCoinValue();
 
         // then
         assertThat(insertedCoin).isEqualTo(coin);
@@ -63,7 +63,7 @@ class VendingMachineCoinTest
         VendingMachine vendingMachine = new VendingMachine();
 
         // when
-        int insertedCoin = vendingMachine.getInsertedCoin();
+        int insertedCoin = vendingMachine.getInsertedCoinValue();
 
         // then
         assertThat(insertedCoin).isZero();
@@ -78,11 +78,11 @@ class VendingMachineCoinTest
 
         // when
         vendingMachine.insertCoin(50);
-        int fifty = vendingMachine.getInsertedCoin();
+        int fifty = vendingMachine.getInsertedCoinValue();
         vendingMachine.insertCoin(100);
-        int oneFifty = vendingMachine.getInsertedCoin();
+        int oneFifty = vendingMachine.getInsertedCoinValue();
         vendingMachine.insertCoin(500);
-        int sixFifty = vendingMachine.getInsertedCoin();
+        int sixFifty = vendingMachine.getInsertedCoinValue();
 
         // then
         assertThat(fifty).isEqualTo(50);

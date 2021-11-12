@@ -36,7 +36,7 @@ public class VendingMachine
         insertedCoinBucket.putCoin(coin);
     }
 
-    public int getInsertedCoin()
+    public int getInsertedCoinValue()
     {
         return insertedCoinBucket.getTotalValue();
     }
