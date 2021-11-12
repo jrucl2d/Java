@@ -6,26 +6,27 @@ import java.util.List;
 public class VendingMachine
 {
     private final List<String> drinks;
-    private final CoinBucket coinBucket;
-    private final CoinBucket insertedCoinBucket = CoinBucket.emptyBucket();
+    private final MoneyBucket moneyBucket;
+    private final MoneyBucket insertedMoneyBucket = MoneyBucket.emptyBucket();
+    private final MoneyBucket
     private List<Bill> bills = new ArrayList<>();
     private List<Bill> insertedBills = new ArrayList<>();
 
     public VendingMachine() {
-        this(new ArrayList<>(), CoinBucket.emptyBucket());
+        this(new ArrayList<>(), MoneyBucket.emptyBucket());
     }
 
     public VendingMachine(List<String> drinks) {
-        this(drinks, CoinBucket.emptyBucket());
+        this(drinks, MoneyBucket.emptyBucket());
     }
 
     public VendingMachine(List<String> drinks, List<Integer> coins) {
-        this(drinks, CoinBucket.of(coins));
+        this(drinks, MoneyBucket.of(coins));
     }
 
-    private VendingMachine(List<String> drinks, CoinBucket coinBucket) {
+    private VendingMachine(List<String> drinks, MoneyBucket moneyBucket) {
         this.drinks = drinks;
-        this.coinBucket = coinBucket;
+        this.moneyBucket = moneyBucket;
     }
 
     public List<String> getAllDrinks()
@@ -35,17 +36,17 @@ public class VendingMachine
 
     public void insertCoin(int coin)
     {
-        insertedCoinBucket.putCoin(coin);
+        insertedMoneyBucket.putCoin(coin);
     }
 
     public int getInsertedCoinValue()
     {
-        return insertedCoinBucket.getTotalValue();
+        return insertedMoneyBucket.getTotalValue();
     }
 
     public int getTotalCoinValue()
     {
-        return insertedCoinBucket.getTotalValue() + coinBucket.getTotalValue();
+        return insertedMoneyBucket.getTotalValue() + moneyBucket.getTotalValue();
     }
 
     public void insertBill(int bill)
