@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class VendingMachineCreateTest
 {
@@ -91,7 +92,7 @@ class VendingMachineCreateTest
     }
 
     @Test
-    @DisplayName("잔돈이 든 자판기를 생성할 수 있다.")
+    @DisplayName("동전이 든 자판기를 생성할 수 있다.")
     void name4()
     {
         // given
@@ -100,5 +101,39 @@ class VendingMachineCreateTest
         // when
         // then
         assertThat(vendingMachine).isNotNull();
+    }
+
+    @Test
+    @DisplayName("지폐가 든 자판기를 생성할 수 있다.")
+    void name5()
+    {
+        // given
+        VendingMachine vendingMachine = new VendingMachine(new ArrayList<>(), 5000 + 10000 + 50000);
+
+        // when
+        // then
+        assertThat(vendingMachine).isNotNull();
+    }
+
+    @Test
+    @DisplayName("동전과 지폐가 함께 든 자판기를 생성할 수 있다.")
+    void name6()
+    {
+        // given
+        VendingMachine vendingMachine = new VendingMachine(new ArrayList<>(), 50000 + 100 + 500);
+
+        // when
+        // then
+        assertThat(vendingMachine).isNotNull();
+    }
+
+    @Test
+    @DisplayName("동전 혹은 지폐에 해당하지 않는 값이 든 자판기를 생성하면 IllegalArgumentException 발생한다.")
+    void name7()
+    {
+        // given
+        // when
+        // then
+        assertThrows(IllegalArgumentException.class, () -> new VendingMachine(new ArrayList<>(), 15 + 500));
     }
 }

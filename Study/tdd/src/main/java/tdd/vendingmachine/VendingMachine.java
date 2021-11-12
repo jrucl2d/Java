@@ -36,19 +36,19 @@ public class VendingMachine
         insertedMoneyBucket.putCoin(coin);
     }
 
-    public int getInsertedCoinValue()
-    {
-        return insertedMoneyBucket.getCoinTotalValue();
-    }
-
-    public int getTotalCoinValue()
-    {
-        return insertedMoneyBucket.getCoinTotalValue() + moneyBucket.getTotalValue();
-    }
-
     public void insertBill(int bill)
     {
         insertedMoneyBucket.putBill(bill);
+    }
+
+    public void insertMoney(int money)
+    {
+        insertedMoneyBucket.putMoney(money);
+    }
+
+    public int getInsertedCoinValue()
+    {
+        return insertedMoneyBucket.getCoinTotalValue();
     }
 
     public int getInsertedBillValue()
@@ -56,8 +56,13 @@ public class VendingMachine
         return insertedMoneyBucket.getBillTotalValue();
     }
 
-    public int getTotalBillValue()
+    public int getTotalInsertedMoneyValue()
     {
-        return getInsertedBillValue();
+        return getInsertedBillValue() + getInsertedCoinValue();
+    }
+
+    public int getTotalMachineMoneyValue()
+    {
+        return getInsertedBillValue() + getInsertedCoinValue() + moneyBucket.getTotalValue();
     }
 }

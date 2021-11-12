@@ -21,22 +21,34 @@ public class MoneyBucket
     public static MoneyBucket of(int totalValue)
     {
         MoneyBucket moneyBucket = emptyBucket();
-        moneyBucket.calculateMoney(totalValue, 0, 4, moneyBucket::putBill);
-        moneyBucket.calculateMoney(totalValue, 4, 7, moneyBucket::putCoin);
+        totalValue = moneyBucket.calculateMoney(totalValue, 0, 4, moneyBucket::putBill);
+        totalValue = moneyBucket.calculateMoney(totalValue, 4, 7, moneyBucket::putCoin);
+        if (totalValue != 0)
+            throw new IllegalArgumentException();
         return moneyBucket;
     }
 
-    private void calculateMoney(int totalValue, int from, int to, IntConsumer putFunction)
+    private int calculateMoney(int totalValue, int from, int to, IntConsumer putFunction)
     {
         int[] possibles = {50000, 10000, 5000, 1000, 500, 100, 50};
         for (int i = from; i < to; i++) {
             int money = possibles[i];
             int count = totalValue / money;
+            if (count == 0) continue;
             totalValue -= money * count;
             for (int j = 0; j < count; j++) {
                 putFunction.accept(money);
             }
         }
+        return totalValue;
+    }
+
+    public void putMoney(int money)
+    {
+        money = this.calculateMoney(money, 0, 4, this::putBill);
+        money = this.calculateMoney(money, 4, 7, this::putCoin);
+        if (money != 0)
+            throw new IllegalArgumentException();
     }
 
     public void putCoin(int coin)
@@ -44,14 +56,14 @@ public class MoneyBucket
         this.monies.add(new Coin(coin));
     }
 
-    public int getTotalValue()
-    {
-        return this.monies.stream().map(Money::getValue).reduce(0, Integer::sum);
-    }
-
     public void putBill(int bill)
     {
         this.monies.add(new Bill(bill));
+    }
+
+    public int getTotalValue()
+    {
+        return this.monies.stream().map(Money::getValue).reduce(0, Integer::sum);
     }
 
     public int getCoinTotalValue()
