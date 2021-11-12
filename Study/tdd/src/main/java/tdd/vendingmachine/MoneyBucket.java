@@ -58,7 +58,7 @@ public class MoneyBucket
 
     public void putBill(int bill)
     {
-        this.monies.add(new Bill(bill));
+        this.monies.add(new Bill(Price.of(bill)));
     }
 
     public int getTotalValue()
