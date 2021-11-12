@@ -1,6 +1,7 @@
 package tdd.vendingmachine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.IntConsumer;
 
@@ -21,18 +22,25 @@ public class MoneyBucket
     public static MoneyBucket of(int totalValue)
     {
         MoneyBucket moneyBucket = emptyBucket();
-        totalValue = moneyBucket.calculateMoney(totalValue, 0, 4, moneyBucket::putBill);
-        totalValue = moneyBucket.calculateMoney(totalValue, 4, 7, moneyBucket::putCoin);
+        totalValue = moneyBucket.calculateBill(totalValue);
+        totalValue = moneyBucket.calculateCoin(totalValue);
         if (totalValue != 0)
             throw new IllegalArgumentException();
         return moneyBucket;
     }
 
+    private int calculateBill(int totalValue) {
+        return calculateMoney(totalValue, 0, 4, this::putBill);
+    }
+    private int calculateCoin(int totalValue) {
+        return calculateMoney(totalValue, 4, 7, this::putCoin);
+    }
+
     private int calculateMoney(int totalValue, int from, int to, IntConsumer putFunction)
     {
-        int[] possibles = {50000, 10000, 5000, 1000, 500, 100, 50};
+        List<Integer> possibles = Price.getValues();
         for (int i = from; i < to; i++) {
-            int money = possibles[i];
+            int money = possibles.get(i);
             int count = totalValue / money;
             if (count == 0) continue;
             totalValue -= money * count;
@@ -45,8 +53,8 @@ public class MoneyBucket
 
     public void putMoney(int money)
     {
-        money = this.calculateMoney(money, 0, 4, this::putBill);
-        money = this.calculateMoney(money, 4, 7, this::putCoin);
+        money = calculateBill(money);
+        money = calculateCoin(money);
         if (money != 0)
             throw new IllegalArgumentException();
     }
