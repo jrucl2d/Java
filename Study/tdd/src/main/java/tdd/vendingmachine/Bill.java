@@ -4,10 +4,9 @@ public class Bill implements Money
 {
     private final Price value;
 
-    public Bill(Price value)
+    public Bill(int value)
     {
-        value.checkIsBill();
-        this.value = value;
+        this.value = Price.ofBill(value);
     }
 
     @Override

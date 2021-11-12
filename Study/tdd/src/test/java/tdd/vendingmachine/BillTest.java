@@ -15,7 +15,7 @@ class BillTest
     void name(int value)
     {
         // given
-        Bill bill = new Bill(Price.of(value));
+        Bill bill = new Bill(value);
 
         // when
         // then
@@ -28,7 +28,7 @@ class BillTest
     void name1(int value)
     {
         // given
-        Bill bill = new Bill(Price.of(value));
+        Bill bill = new Bill(value);
 
         // when
         int billValue = bill.getValue();
@@ -45,6 +45,6 @@ class BillTest
         // given
         // when
         // then
-        assertThrows(IllegalArgumentException.class, () -> new Bill(Price.of(value)));
+        assertThrows(IllegalArgumentException.class, () -> new Bill(value));
     }
 }

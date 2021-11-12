@@ -12,6 +12,7 @@ public enum Price
     ;
 
     private final int value;
+
     public int getValue()
     {
         return value;
@@ -45,9 +46,24 @@ public enum Price
         }
     }
 
-    public void checkIsBill()
+    public static Price ofCoin(int value)
     {
-        if (this == 오십원 || this == 백원 || this == 오백원)
+        Price price = of(value);
+        if (price.isBill())
             throw new IllegalArgumentException();
+        return price;
+    }
+
+    public static Price ofBill(int value)
+    {
+        Price price = of(value);
+        if (!price.isBill())
+            throw new IllegalArgumentException();
+        return price;
+    }
+
+    private boolean isBill()
+    {
+        return this != 오십원 && this != 백원 && this != 오백원;
     }
 }
