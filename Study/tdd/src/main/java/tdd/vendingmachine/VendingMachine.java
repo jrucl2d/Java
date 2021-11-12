@@ -8,9 +8,6 @@ public class VendingMachine
     private final List<String> drinks;
     private final MoneyBucket moneyBucket;
     private final MoneyBucket insertedMoneyBucket = MoneyBucket.emptyBucket();
-    private final MoneyBucket
-    private List<Bill> bills = new ArrayList<>();
-    private List<Bill> insertedBills = new ArrayList<>();
 
     public VendingMachine() {
         this(new ArrayList<>(), MoneyBucket.emptyBucket());
@@ -20,8 +17,8 @@ public class VendingMachine
         this(drinks, MoneyBucket.emptyBucket());
     }
 
-    public VendingMachine(List<String> drinks, List<Integer> coins) {
-        this(drinks, MoneyBucket.of(coins));
+    public VendingMachine(List<String> drinks, int monies) {
+        this(drinks, MoneyBucket.of(monies));
     }
 
     private VendingMachine(List<String> drinks, MoneyBucket moneyBucket) {
@@ -41,26 +38,26 @@ public class VendingMachine
 
     public int getInsertedCoinValue()
     {
-        return insertedMoneyBucket.getTotalValue();
+        return insertedMoneyBucket.getCoinTotalValue();
     }
 
     public int getTotalCoinValue()
     {
-        return insertedMoneyBucket.getTotalValue() + moneyBucket.getTotalValue();
+        return insertedMoneyBucket.getCoinTotalValue() + moneyBucket.getTotalValue();
     }
 
     public void insertBill(int bill)
     {
-        insertedBills.add(new Bill(bill));
+        insertedMoneyBucket.putBill(bill);
     }
 
     public int getInsertedBillValue()
     {
-        return insertedBills.stream().map(Bill::getValue).reduce(0, Integer::sum);
+        return insertedMoneyBucket.getBillTotalValue();
     }
 
     public int getTotalBillValue()
     {
-        return bills.stream().map(Bill::getValue).reduce(0, Integer::sum) + getInsertedBillValue();
+        return getInsertedBillValue();
     }
 }

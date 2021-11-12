@@ -95,7 +95,7 @@ class VendingMachineCreateTest
     void name4()
     {
         // given
-        VendingMachine vendingMachine = new VendingMachine(new ArrayList<>(), List.of(50, 100, 500));
+        VendingMachine vendingMachine = new VendingMachine(new ArrayList<>(), 50 + 100 + 500);
 
         // when
         // then

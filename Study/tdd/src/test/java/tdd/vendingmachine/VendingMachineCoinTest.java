@@ -95,7 +95,7 @@ class VendingMachineCoinTest
     void name3()
     {
         // given
-        VendingMachine vendingMachine = new VendingMachine(new ArrayList<>(), List.of(50, 50, 100, 500));
+        VendingMachine vendingMachine = new VendingMachine(new ArrayList<>(), 50 + 50 + 100 + 500);
 
         // when
         int totalCoinValue = vendingMachine.getTotalCoinValue();
