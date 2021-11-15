@@ -1,5 +1,7 @@
 package tdd.vendingmachine;
 
+import java.util.Objects;
+
 public class Drink
 {
     private final String name;
@@ -19,5 +21,20 @@ public class Drink
     public int getPrice()
     {
         return this.price;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Drink drink = (Drink) o;
+        return price == drink.price && Objects.equals(name, drink.name);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(name, price);
     }
 }

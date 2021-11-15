@@ -46,7 +46,10 @@ class VendingMachineCreateTest
     void name1()
     {
         // given
-        List<String> drinks = Arrays.asList("사이다", "콜라", "식혜", "물");
+        List<Drink> drinks = Arrays.asList(new Drink("사이다", 1200)
+            , new Drink("콜라", 1300)
+            , new Drink("식혜", 600)
+            , new Drink("물", 300));
         VendingMachine vendingMachine = new VendingMachine(drinks);
 
         // when
@@ -57,13 +60,13 @@ class VendingMachineCreateTest
     @ParameterizedTest(name = "음료수 {1}개 : {0}")
     @MethodSource("drinkLists")
     @DisplayName("자판기에 들어있는 음료수를 확인할 수 있다.")
-    void name2(List<String> drinks, int drinkNum)
+    void name2(List<Drink> drinks, int drinkNum)
     {
         // given
         VendingMachine vendingMachine = new VendingMachine(drinks);
 
         // when
-        List<String> allDrinks = vendingMachine.getAllDrinks();
+        List<Drink> allDrinks = vendingMachine.getAllDrinks();
 
         // then
         assertThat(allDrinks.size()).isEqualTo(drinkNum);
@@ -71,8 +74,12 @@ class VendingMachineCreateTest
     }
     private static Stream<Arguments> drinkLists() {
         return Stream.of(
-            Arguments.of(Arrays.asList("사이다", "콜라", "식혜", "물"), 4),
-            Arguments.of(Arrays.asList("사이다", "콜라"), 2),
+            Arguments.of(Arrays.asList(new Drink("사이다", 1200)
+                , new Drink("콜라", 1300)
+                , new Drink("식혜", 600)
+                , new Drink("물", 300)), 4),
+            Arguments.of(Arrays.asList(new Drink("사이다", 1200)
+                , new Drink("콜라", 1300)), 2),
             Arguments.of(Collections.emptyList(), 0)
         );
     }
@@ -85,7 +92,7 @@ class VendingMachineCreateTest
         VendingMachine vendingMachine = new VendingMachine();
 
         // when
-        List<String> allDrinks = vendingMachine.getAllDrinks();
+        List<Drink> allDrinks = vendingMachine.getAllDrinks();
 
         // then
         assertThat(allDrinks).isEmpty();

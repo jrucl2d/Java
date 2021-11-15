@@ -5,7 +5,7 @@ import java.util.List;
 
 public class VendingMachine
 {
-    private final List<String> drinks;
+    private final List<Drink> drinks;
     private final MoneyBucket moneyBucket;
     private final MoneyBucket insertedMoneyBucket = MoneyBucket.emptyBucket();
 
@@ -13,20 +13,20 @@ public class VendingMachine
         this(new ArrayList<>(), MoneyBucket.emptyBucket());
     }
 
-    public VendingMachine(List<String> drinks) {
+    public VendingMachine(List<Drink> drinks) {
         this(drinks, MoneyBucket.emptyBucket());
     }
 
-    public VendingMachine(List<String> drinks, int monies) {
+    public VendingMachine(List<Drink> drinks, int monies) {
         this(drinks, MoneyBucket.of(monies));
     }
 
-    private VendingMachine(List<String> drinks, MoneyBucket moneyBucket) {
+    private VendingMachine(List<Drink> drinks, MoneyBucket moneyBucket) {
         this.drinks = drinks;
         this.moneyBucket = moneyBucket;
     }
 
-    public List<String> getAllDrinks()
+    public List<Drink> getAllDrinks()
     {
         return this.drinks;
     }
