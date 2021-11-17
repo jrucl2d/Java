@@ -7,7 +7,8 @@ import java.time.Duration;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ErrorHandling {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException
+    {
         Flux.just(1, 2, 0)
             .map(i -> "100 / " + i + " = " + (100 / i))
             .onErrorReturn("Divided by zero :(") // catch 해서 default 스태틱 값을 리턴한다.
