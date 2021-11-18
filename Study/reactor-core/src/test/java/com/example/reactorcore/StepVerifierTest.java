@@ -5,6 +5,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import reactor.test.StepVerifierOptions;
+import reactor.test.publisher.PublisherProbe;
 import reactor.util.context.Context;
 
 import java.time.Duration;
@@ -53,7 +54,52 @@ public class StepVerifierTest
             .verifyComplete();
     }
 
+    @Test
+    void name5() {
+        StepVerifier.create(processOrFallback(Mono.just("just a phrase with    tabs!"),
+            Mono.just("Empty_PHRASE")))
+            .expectNext("just", "a", "phrase", "with", "tabs!")
+            .verifyComplete();
+    }
+
+    @Test
+    void name6() {
+        StepVerifier.create(processOrFallback(Mono.empty(),
+                Mono.just("Empty_PHRASE")))
+            .expectNext("Empty_PHRASE")
+            .verifyComplete();
+    }
+
+    private Flux<String> processOrFallback(Mono<String> source, Mono<String> fallBack)
+    {
+        return source
+            .flatMapMany(ph -> Flux.fromArray(ph.split("\\s+")))
+            .switchIfEmpty(fallBack);
+    }
+
     private <T> Flux<T> appendBoomError(Flux<T> source) {
         return source.concatWith(Mono.error(new IllegalArgumentException("boom")));
+    }
+
+    private Mono<String> executeCommand(String command) {
+        return Mono.just(command + " DONE");
+    }
+
+    public Mono<Void> processOrFallback2(Mono<String> commandSource, Mono<Void> doWhenEmpty) {
+        return commandSource
+            .flatMap(command -> executeCommand(command).then())
+            .switchIfEmpty(doWhenEmpty);
+    }
+
+    @Test
+    void name7() {
+        PublisherProbe<Void> probe = PublisherProbe.empty(); // 빈 시퀀스로 전환되는 프로브 생성
+
+        StepVerifier.create(processOrFallback2(Mono.empty(), probe.mono())) // Mono<Void> 자리에 프로브 사용
+            .verifyComplete();
+
+        probe.assertWasSubscribed(); // 시퀀스 완료 후 프로브로 사용 여부 확인 가능
+        probe.assertWasRequested();
+        probe.assertWasNotCancelled();
     }
 }
