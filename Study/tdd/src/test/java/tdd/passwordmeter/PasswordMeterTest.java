@@ -34,6 +34,31 @@ public class PasswordMeterTest {
         assertPasswordStrength("abcdABabc", PasswordStrength.NORMAL);
     }
 
+    @Test
+    void meet2RulesExceptForUppercaseRule() {
+        assertPasswordStrength("abcde1234", PasswordStrength.NORMAL);
+    }
+
+    @Test
+    void meetOnlyLengthRule() {
+        assertPasswordStrength("abcdefgwiegc", PasswordStrength.WEEK);
+    }
+
+    @Test
+    void meetOnlyDigitRule() {
+        assertPasswordStrength("123", PasswordStrength.WEEK);
+    }
+
+    @Test
+    void meetOnlyUppercaseRule() {
+        assertPasswordStrength("WBEWEWF", PasswordStrength.WEEK);
+    }
+
+    @Test
+    void noRules() {
+        assertPasswordStrength("ab", PasswordStrength.WEEK);
+    }
+
     private void assertPasswordStrength(String password, PasswordStrength expected) {
         var meter = new PasswordMeter();
         var result = meter.meter(password);
