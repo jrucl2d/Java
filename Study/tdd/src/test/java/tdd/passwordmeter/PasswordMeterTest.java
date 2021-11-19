@@ -23,6 +23,17 @@ public class PasswordMeterTest {
         assertPasswordStrength("ABCD1234abc", PasswordStrength.STRONG);
     }
 
+    @Test
+    void meet2RulesExceptForLengthRule() {
+        assertPasswordStrength("abc12AB", PasswordStrength.NORMAL);
+        assertPasswordStrength("12ABabc", PasswordStrength.NORMAL);
+    }
+
+    @Test
+    void meet2RulesExceptForDigitRule() {
+        assertPasswordStrength("abcdABabc", PasswordStrength.NORMAL);
+    }
+
     private void assertPasswordStrength(String password, PasswordStrength expected) {
         var meter = new PasswordMeter();
         var result = meter.meter(password);

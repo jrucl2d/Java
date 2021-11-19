@@ -1,5 +1,5 @@
 package tdd.passwordmeter;
 
 public enum PasswordStrength {
-    INVALID, STRONG;
+    INVALID, STRONG, NORMAL
 }
