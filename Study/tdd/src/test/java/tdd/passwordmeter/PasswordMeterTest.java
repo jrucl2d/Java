@@ -8,15 +8,24 @@ public class PasswordMeterTest {
 
     @Test
     void nullInput() {
-        var meter = new PasswordMeter();
-        var result = meter.meter(null);
-        assertThat(result).isEqualTo(PasswordStrength.INVALID);
+        assertPasswordStrength(null, PasswordStrength.INVALID);
     }
 
     @Test
     void emptyInput() {
+        assertPasswordStrength("", PasswordStrength.INVALID);
+    }
+
+    @Test
+    void meetAllRules() {
+        assertPasswordStrength("abcdABCD123", PasswordStrength.STRONG);
+        assertPasswordStrength("123abcdABCD", PasswordStrength.STRONG);
+        assertPasswordStrength("ABCD1234abc", PasswordStrength.STRONG);
+    }
+
+    private void assertPasswordStrength(String password, PasswordStrength expected) {
         var meter = new PasswordMeter();
-        var result = meter.meter("");
-        assertThat(result).isEqualTo(PasswordStrength.INVALID);
+        var result = meter.meter(password);
+        assertThat(result).isEqualTo(expected);
     }
 }
