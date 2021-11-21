@@ -27,5 +27,7 @@ public class IterableExample {
         for (Iterator<Integer> it = iter.iterator(); it.hasNext();) {
             System.out.println(it.next());
         }
+
+        // Iterable (pull) <---> Observable (push) <= duality
     }
 }
