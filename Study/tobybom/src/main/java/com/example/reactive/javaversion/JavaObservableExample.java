@@ -1,4 +1,4 @@
-package com.example.reactive;
+package com.example.reactive.javaversion;
 
 import java.util.Observable;
 import java.util.Observer;
