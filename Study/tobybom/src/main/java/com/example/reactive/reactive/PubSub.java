@@ -25,25 +25,10 @@ public class PubSub {
 
     private static Publisher<Integer> mapPub(Publisher<Integer> pub, Function<Integer, Integer> f) {
         // subscription을 전달 받아서 새로운 subscription으로 건네주는 중개 역할
-        return sub -> pub.subscribe(new Subscriber<>() {
-            @Override
-            public void onSubscribe(Subscription s) {
-                sub.onSubscribe(s);
-            }
-
+        return sub -> pub.subscribe(new DelegateSub((Subscriber<Integer>) sub) {
             @Override
             public void onNext(Integer integer) {
                 sub.onNext(f.apply(integer));
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                sub.onError(t);
-            }
-
-            @Override
-            public void onComplete() {
-                sub.onComplete();
             }
         });
     }
