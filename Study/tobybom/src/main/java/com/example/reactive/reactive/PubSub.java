@@ -20,20 +20,21 @@ public class PubSub {
         Publisher<Integer> pub = iterPub(iter);
         Publisher<Integer> mapPub = mapPub(pub, s -> s * 10);
         Publisher<Integer> mapPub2 = mapPub(mapPub, s -> -s);
+        Publisher<String> strMap = mapPub(pub, s -> "str : " + s);
         
-        Publisher<Integer> sumPub = sumPub(pub);
-        Publisher<Integer> reducePub = reducePub(pub, 0, Integer::sum);
-        Subscriber<Integer> sub = logSub();
-        reducePub.subscribe(sub);
+//        Publisher<Integer> sumPub = sumPub(pub);
+//        Publisher<Integer> reducePub = reducePub(pub, 0, Integer::sum);
+        Publisher<StringBuilder> reducePub = reducePub(pub, new StringBuilder(), StringBuilder::append);
+        reducePub.subscribe(logSub());
     }
 
-    private static Publisher<Integer> reducePub(Publisher<Integer> pub, int init, BiFunction<Integer, Integer, Integer> f) {
-        return sub -> pub.subscribe(new DelegateSub((Subscriber<Integer>) sub) {
-            int result = init;
+    private static <T, R> Publisher<R> reducePub(Publisher<T> pub, R init, BiFunction<R, T, R> f) {
+        return sub -> pub.subscribe(new DelegateSub<T, R>(sub) {
+            R result = init;
 
             @Override
-            public void onNext(Integer integer) {
-                result = f.apply(result, integer);
+            public void onNext(T t) {
+                result = f.apply(result, t);
             }
 
             @Override
@@ -44,34 +45,34 @@ public class PubSub {
         });
     }
 
-    private static Publisher<Integer> sumPub(Publisher<Integer> pub) {
-        return sub -> pub.subscribe(new DelegateSub((Subscriber<Integer>) sub) {
-            int sum = 0;
+//    private static Publisher<Integer> sumPub(Publisher<Integer> pub) {
+//        return sub -> pub.subscribe(new DelegateSub((Subscriber<Integer>) sub) {
+//            int sum = 0;
+//
+//            @Override
+//            public void onNext(Integer integer) {
+//                sum += integer;
+//            }
+//
+//            @Override
+//            public void onComplete() {
+//                sub.onNext(sum);
+//                sub.onComplete();
+//            }
+//        });
+//    }
 
-            @Override
-            public void onNext(Integer integer) {
-                sum += integer;
-            }
-
-            @Override
-            public void onComplete() {
-                sub.onNext(sum);
-                sub.onComplete();
-            }
-        });
-    }
-
-    private static Publisher<Integer> mapPub(Publisher<Integer> pub, Function<Integer, Integer> f) {
+    private static <T, R> Publisher<R> mapPub(Publisher<T> pub, Function<T, R> f) {
         // subscription을 전달 받아서 새로운 subscription으로 건네주는 중개 역할
-        return sub -> pub.subscribe(new DelegateSub((Subscriber<Integer>) sub) {
+        return sub -> pub.subscribe(new DelegateSub<T, R>(sub) {
             @Override
-            public void onNext(Integer integer) {
-                sub.onNext(f.apply(integer));
+            public void onNext(T t) {
+                sub.onNext(f.apply(t));
             }
         });
     }
 
-    private static Subscriber<Integer> logSub() {
+    private static <T> Subscriber<T> logSub() {
         return new Subscriber<>() {
             @Override
             public void onSubscribe(Subscription s) {
@@ -80,8 +81,8 @@ public class PubSub {
             }
 
             @Override
-            public void onNext(Integer integer) {
-                System.out.println("onNext : " + integer);
+            public void onNext(T t) {
+                System.out.println("onNext : " + t);
             }
 
             @Override
