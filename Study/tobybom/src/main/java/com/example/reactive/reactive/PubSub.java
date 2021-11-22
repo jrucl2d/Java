@@ -19,8 +19,29 @@ public class PubSub {
         Publisher<Integer> pub = iterPub(iter);
         Publisher<Integer> mapPub = mapPub(pub, s -> s * 10);
         Publisher<Integer> mapPub2 = mapPub(mapPub, s -> -s);
+        
+        Publisher<Integer> sumPub = sumPub(pub);
         Subscriber<Integer> sub = logSub();
-        mapPub2.subscribe(sub);
+        sumPub.subscribe(sub);
+    }
+
+    private static Publisher<Integer> sumPub(Publisher<Integer> pub) {
+        return sub -> {
+            pub.subscribe(new DelegateSub((Subscriber<Integer>) sub) {
+                int sum = 0;
+
+                @Override
+                public void onNext(Integer integer) {
+                    sum += integer;
+                }
+
+                @Override
+                public void onComplete() {
+                    sub.onNext(sum);
+                    sub.onComplete();
+                }
+            });
+        };
     }
 
     private static Publisher<Integer> mapPub(Publisher<Integer> pub, Function<Integer, Integer> f) {
