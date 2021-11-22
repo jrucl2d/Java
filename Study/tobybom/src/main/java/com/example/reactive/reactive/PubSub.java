@@ -4,6 +4,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -21,27 +22,43 @@ public class PubSub {
         Publisher<Integer> mapPub2 = mapPub(mapPub, s -> -s);
         
         Publisher<Integer> sumPub = sumPub(pub);
+        Publisher<Integer> reducePub = reducePub(pub, 0, Integer::sum);
         Subscriber<Integer> sub = logSub();
-        sumPub.subscribe(sub);
+        reducePub.subscribe(sub);
+    }
+
+    private static Publisher<Integer> reducePub(Publisher<Integer> pub, int init, BiFunction<Integer, Integer, Integer> f) {
+        return sub -> pub.subscribe(new DelegateSub((Subscriber<Integer>) sub) {
+            int result = init;
+
+            @Override
+            public void onNext(Integer integer) {
+                result = f.apply(result, integer);
+            }
+
+            @Override
+            public void onComplete() {
+                sub.onNext(result);
+                sub.onComplete();
+            }
+        });
     }
 
     private static Publisher<Integer> sumPub(Publisher<Integer> pub) {
-        return sub -> {
-            pub.subscribe(new DelegateSub((Subscriber<Integer>) sub) {
-                int sum = 0;
+        return sub -> pub.subscribe(new DelegateSub((Subscriber<Integer>) sub) {
+            int sum = 0;
 
-                @Override
-                public void onNext(Integer integer) {
-                    sum += integer;
-                }
+            @Override
+            public void onNext(Integer integer) {
+                sum += integer;
+            }
 
-                @Override
-                public void onComplete() {
-                    sub.onNext(sum);
-                    sub.onComplete();
-                }
-            });
-        };
+            @Override
+            public void onComplete() {
+                sub.onNext(sum);
+                sub.onComplete();
+            }
+        });
     }
 
     private static Publisher<Integer> mapPub(Publisher<Integer> pub, Function<Integer, Integer> f) {
