@@ -28,19 +28,22 @@ public class SchedulerEx {
 
             }
         });
-        // 기존의 pub를 중개하면서 새로운 스레드에서 실행해줌.
-//        Publisher<Integer> subOnPub = sub -> {
-//        ExecutorService executorService = Executors.newSingleThreadExecutor();
-//            executorService.execute(() -> pub.subscribe(sub));
-//        };
-        Publisher<Integer> pubOnPub = sub -> pub.subscribe(new Subscriber<>() {
+
+        // 기존의 pub를 중개하면서 새로운 스레드에서 실행해줌. subscribeOn의 개념
+        Publisher<Integer> subOnPub = sub -> {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+            executorService.execute(() -> pub.subscribe(sub));
+            executorService.shutdown();
+        };
+
+        Publisher<Integer> pubOnPub = sub -> subOnPub.subscribe(new Subscriber<>() {
             ExecutorService executorService = Executors.newSingleThreadExecutor();
             @Override
             public void onSubscribe(Subscription s) {
                 sub.onSubscribe(s); // subscribe하고 request 던지는 것까지는 main에서(빠른 부분)
             }
 
-            // 나머지는 새로운 스레드에서 진행
+            // 나머지는 새로운 스레드에서 진행(publishOn의 개념)
             @Override
             public void onNext(Integer integer) {
                 executorService.execute(() -> sub.onNext(integer));
@@ -49,11 +52,13 @@ public class SchedulerEx {
             @Override
             public void onError(Throwable t) {
                 executorService.execute(() -> sub.onError(t));
+                executorService.shutdown();
             }
 
             @Override
             public void onComplete() {
                 executorService.execute(sub::onComplete);
+                executorService.shutdown();
             }
         });
 
