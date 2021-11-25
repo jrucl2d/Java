@@ -10,19 +10,30 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.Future;
+import org.springframework.util.concurrent.ListenableFuture;
 
 @Slf4j
 @EnableAsync // Async 사용하도록
 @SpringBootApplication
 public class ReactiveApplication {
+    // 직접 ThreadPool을 설정
+    @Bean
+    ThreadPoolTaskExecutor tp() {
+        ThreadPoolTaskExecutor te = new ThreadPoolTaskExecutor();
+        te.setCorePoolSize(10);
+        te.setMaxPoolSize(100); // 큐가 꽉 차야지 MAX 내에서 쓰레드 하나가 추가된다.
+        te.setQueueCapacity(200);
+        te.setThreadNamePrefix("myThread-");
+        te.initialize();
+        return te;
+    }
 
     @Component
     public static class MyService {
-        @Async // AOP로 Async하게 실행
-        public Future<String> hello() throws InterruptedException {
+        @Async(value = "tp") // AOP로 Async하게 실행, ThreadPool 이름을 지정
+        public ListenableFuture<String> hello() throws InterruptedException {
             log.info("hello()");
             Thread.sleep(1000);
             return new AsyncResult<>("Hello");
@@ -42,9 +53,9 @@ public class ReactiveApplication {
     ApplicationRunner run() {
         return args -> {
             log.info("run()");
-            final Future<String> future = myService.hello();
-            log.info("exit " + future.isDone());
-            log.info("result " + future.get());
+            ListenableFuture<String> future = myService.hello();
+            future.addCallback(System.out::println, System.err::println);
+            log.info("exit");
         };
     }
 }
