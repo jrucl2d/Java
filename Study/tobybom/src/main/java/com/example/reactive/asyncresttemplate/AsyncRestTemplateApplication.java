@@ -34,17 +34,7 @@ public class AsyncRestTemplateApplication {
 
     @NoArgsConstructor
     public static class Completion {
-        private Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn;
         private Completion next;
-        private Consumer<ResponseEntity<String>> con;
-
-        public Completion(Consumer<ResponseEntity<String>> con) {
-            this.con = con;
-        }
-
-        public Completion(Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn) {
-            this.fn = fn;
-        }
 
         public static Completion from(ListenableFuture<ResponseEntity<String>> lf) {
             Completion c = new Completion();
@@ -53,13 +43,13 @@ public class AsyncRestTemplateApplication {
         }
 
         public Completion andApply(Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn) {
-            Completion c = new Completion(fn);
+            Completion c = new ApplyCompetion(fn);
             this.next = c;
             return c;
         }
 
         public void andAccept(Consumer<ResponseEntity<String>> con) {
-            this.next = new Completion(con);
+            this.next = new AcceptCompletion(con);
         }
 
         private void error(Throwable e) {
@@ -71,14 +61,33 @@ public class AsyncRestTemplateApplication {
             }
         }
 
-        private void run(ResponseEntity<String> val) {
-            if (con != null) {
-                con.accept(val);
-            }
-            else if (fn != null) {
-                ListenableFuture<ResponseEntity<String>> lf = fn.apply(val);
-                lf.addCallback(this::complete, this::error);
-            }
+        protected void run(ResponseEntity<String> val) {
+        }
+    }
+
+    public static class AcceptCompletion extends Completion {
+        private Consumer<ResponseEntity<String>> con;
+        public AcceptCompletion(Consumer<ResponseEntity<String>> con) {
+            this.con = con;
+        }
+
+        @Override
+        protected void run(ResponseEntity<String> val) {
+            con.accept(val);
+        }
+    }
+
+    public static class ApplyCompetion extends Completion {
+        private Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn;
+
+        public ApplyCompetion(Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn) {
+            this.fn = fn;
+        }
+
+        @Override
+        protected void run(ResponseEntity<String> val) {
+            ListenableFuture<ResponseEntity<String>> lf = fn.apply(val);
+            lf.addCallback(super::complete, super::error);
         }
     }
 
