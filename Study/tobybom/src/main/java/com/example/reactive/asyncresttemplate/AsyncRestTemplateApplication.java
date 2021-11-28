@@ -34,27 +34,27 @@ public class AsyncRestTemplateApplication {
     }
 
     @NoArgsConstructor
-    public static class Completion {
+    public static class Completion<S, T> {
         protected Completion next;
 
-        public static Completion from(ListenableFuture<ResponseEntity<String>> lf) {
-            Completion c = new Completion();
+        public static <S,T> Completion<S,T> from(ListenableFuture<T> lf) {
+            Completion<S,T> c = new Completion<>();
             lf.addCallback(c::complete, c::error);
             return c;
         }
 
-        public Completion andApply(Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn) {
-            Completion c = new ApplyCompetion(fn);
+        public <V> Completion<T,V> andApply(Function<T, ListenableFuture<V>> fn) {
+            Completion<T,V> c = new ApplyCompetion<>(fn);
             this.next = c;
             return c;
         }
 
-        public void andAccept(Consumer<ResponseEntity<String>> con) {
-            this.next = new AcceptCompletion(con);
+        public void andAccept(Consumer<T> con) {
+            this.next = new AcceptCompletion<>(con);
         }
 
-        public Completion andError(Consumer<Throwable> econ) {
-            Completion c = new ErrorCompletion(econ);
+        public Completion<T,T> andError(Consumer<Throwable> econ) {
+            Completion<T,T> c = new ErrorCompletion<>(econ);
             this.next = c;
             return c;
         }
@@ -65,36 +65,36 @@ public class AsyncRestTemplateApplication {
             }
         }
 
-        private void complete(ResponseEntity<String> s) {
+        private void complete(T t) {
             if (next != null) {
-                next.run(s);
+                next.run(t);
             }
         }
 
-        protected void run(ResponseEntity<String> val) {
+        protected void run(S val) {
         }
     }
 
-    public static class AcceptCompletion extends Completion {
-        private Consumer<ResponseEntity<String>> con;
-        public AcceptCompletion(Consumer<ResponseEntity<String>> con) {
+    public static class AcceptCompletion<S> extends Completion<S, Void> {
+        private Consumer<S> con;
+        public AcceptCompletion(Consumer<S> con) {
             this.con = con;
         }
 
         @Override
-        protected void run(ResponseEntity<String> val) {
+        protected void run(S val) {
             con.accept(val);
         }
     }
 
-    public static class ErrorCompletion extends Completion {
+    public static class ErrorCompletion<T> extends Completion<T,T> {
         private Consumer<Throwable> econ;
         public ErrorCompletion(Consumer<Throwable> econ) {
             this.econ = econ;
         }
 
         @Override
-        protected void run(ResponseEntity<String> val) {
+        protected void run(T val) {
             if (super.next != null) {
                 super.next.run(val);
             }
@@ -106,16 +106,16 @@ public class AsyncRestTemplateApplication {
         }
     }
 
-    public static class ApplyCompetion extends Completion {
-        private Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn;
+    public static class ApplyCompetion<S,T> extends Completion<S,T> {
+        private Function<S, ListenableFuture<T>> fn;
 
-        public ApplyCompetion(Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn) {
+        public ApplyCompetion(Function<S, ListenableFuture<T>> fn) {
             this.fn = fn;
         }
 
         @Override
-        protected void run(ResponseEntity<String> val) {
-            ListenableFuture<ResponseEntity<String>> lf = fn.apply(val);
+        protected void run(S val) {
+            ListenableFuture<T> lf = fn.apply(val);
             lf.addCallback(super::complete, super::error);
         }
     }
