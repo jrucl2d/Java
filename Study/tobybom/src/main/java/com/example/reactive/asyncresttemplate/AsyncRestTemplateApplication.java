@@ -11,11 +11,13 @@ import org.springframework.web.client.AsyncRestTemplate;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 @SuppressWarnings("deprecation")
 @SpringBootApplication
 public class AsyncRestTemplateApplication {
     private static final String URL1 = "http://localhost:8081/service?req={req}";
+    private static final String URL2 = "http://localhost:8081/service2?req={req}";
     private static AsyncRestTemplate rt = new AsyncRestTemplate();
 
     @RestController
@@ -24,6 +26,7 @@ public class AsyncRestTemplateApplication {
         public String rest(int idx) {
             DeferredResult<String> dr = new DeferredResult<>();
             Completion.from(rt.getForEntity(URL1, String.class, "h" + idx))
+                    .andApply(s -> rt.getForEntity(URL2, String.class, s.getBody()))
                     .andAccept(s -> dr.setResult(s.getBody()));
             return "rest";
         }
@@ -31,11 +34,16 @@ public class AsyncRestTemplateApplication {
 
     @NoArgsConstructor
     public static class Completion {
+        private Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn;
         private Completion next;
         private Consumer<ResponseEntity<String>> con;
 
         public Completion(Consumer<ResponseEntity<String>> con) {
             this.con = con;
+        }
+
+        public Completion(Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn) {
+            this.fn = fn;
         }
 
         public static Completion from(ListenableFuture<ResponseEntity<String>> lf) {
@@ -44,9 +52,14 @@ public class AsyncRestTemplateApplication {
             return c;
         }
 
-        public void andAccept(Consumer<ResponseEntity<String>> con) {
-            Completion c = new Completion(con);
+        public Completion andApply(Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn) {
+            Completion c = new Completion(fn);
             this.next = c;
+            return c;
+        }
+
+        public void andAccept(Consumer<ResponseEntity<String>> con) {
+            this.next = new Completion(con);
         }
 
         private void error(Throwable e) {
@@ -61,6 +74,10 @@ public class AsyncRestTemplateApplication {
         private void run(ResponseEntity<String> val) {
             if (con != null) {
                 con.accept(val);
+            }
+            else if (fn != null) {
+                ListenableFuture<ResponseEntity<String>> lf = fn.apply(val);
+                lf.addCallback(this::complete, this::error);
             }
         }
     }
