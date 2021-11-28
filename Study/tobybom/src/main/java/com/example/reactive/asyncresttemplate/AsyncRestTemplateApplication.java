@@ -27,6 +27,7 @@ public class AsyncRestTemplateApplication {
             DeferredResult<String> dr = new DeferredResult<>();
             Completion.from(rt.getForEntity(URL1, String.class, "h" + idx))
                     .andApply(s -> rt.getForEntity(URL2, String.class, s.getBody()))
+                    .andError(dr::setErrorResult)
                     .andAccept(s -> dr.setResult(s.getBody()));
             return "rest";
         }
@@ -34,7 +35,7 @@ public class AsyncRestTemplateApplication {
 
     @NoArgsConstructor
     public static class Completion {
-        private Completion next;
+        protected Completion next;
 
         public static Completion from(ListenableFuture<ResponseEntity<String>> lf) {
             Completion c = new Completion();
@@ -52,7 +53,16 @@ public class AsyncRestTemplateApplication {
             this.next = new AcceptCompletion(con);
         }
 
-        private void error(Throwable e) {
+        public Completion andError(Consumer<Throwable> econ) {
+            Completion c = new ErrorCompletion(econ);
+            this.next = c;
+            return c;
+        }
+
+        protected void error(Throwable e) {
+            if (next != null) {
+                next.error(e); // error 다음에게 전파
+            }
         }
 
         private void complete(ResponseEntity<String> s) {
@@ -74,6 +84,25 @@ public class AsyncRestTemplateApplication {
         @Override
         protected void run(ResponseEntity<String> val) {
             con.accept(val);
+        }
+    }
+
+    public static class ErrorCompletion extends Completion {
+        private Consumer<Throwable> econ;
+        public ErrorCompletion(Consumer<Throwable> econ) {
+            this.econ = econ;
+        }
+
+        @Override
+        protected void run(ResponseEntity<String> val) {
+            if (super.next != null) {
+                super.next.run(val);
+            }
+        }
+
+        @Override
+        protected void error(Throwable e) {
+            econ.accept(e);
         }
     }
 
