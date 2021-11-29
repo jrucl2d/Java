@@ -2,14 +2,13 @@ package com.example.reactive.cfuture;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 @Slf4j
 public class CfutureApp {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
+        final ExecutorService es = Executors.newFixedThreadPool(10);
+
 //        completableFutureBasic();
         CompletableFuture.supplyAsync(() -> {
                     log.info("supplyAsunc");
@@ -25,8 +24,16 @@ public class CfutureApp {
                     return CompletableFuture.completedFuture(s);
                 })
                 .exceptionally(e -> -10) // 예외를 복구한다.
-                .thenAccept(s -> log.info("thenAccept " + s));
+                .thenApplyAsync(s -> {
+                    log.info("async!!");
+                    return s + 3;
+                }, es)
+                .thenAcceptAsync(s -> {
+                    log.info("thenAccept " + s);
+                    es.shutdown();
+                }, es);
         log.info("exit");
+
         ForkJoinPool.commonPool().shutdown();
         ForkJoinPool.commonPool().awaitTermination(10, TimeUnit.SECONDS);
     }
