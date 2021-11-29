@@ -11,8 +11,21 @@ import java.util.concurrent.TimeUnit;
 public class CfutureApp {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 //        completableFutureBasic();
-        CompletableFuture.runAsync(() -> log.info("runAsync"))
-                .thenRun(() -> log.info("thenRun")); // 비동기 완료 이후 실행됨
+        CompletableFuture.supplyAsync(() -> {
+                    log.info("supplyAsunc");
+//                    if (1 == 1) throw new RuntimeException();
+                    return 1;
+                })
+                .thenApply(s -> { // map과 유사
+                    log.info("thenApply");
+                    return s + 1;
+                })
+                .thenCompose(s -> { // flatMap과 유사
+                    log.info("thenCompose");
+                    return CompletableFuture.completedFuture(s);
+                })
+                .exceptionally(e -> -10) // 예외를 복구한다.
+                .thenAccept(s -> log.info("thenAccept " + s));
         log.info("exit");
         ForkJoinPool.commonPool().shutdown();
         ForkJoinPool.commonPool().awaitTermination(10, TimeUnit.SECONDS);
