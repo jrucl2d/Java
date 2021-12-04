@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -15,15 +16,19 @@ public class WebFluxApplication {
     private static final String URL2 = "http://localhost:8081/service2?req={req}";
 
     private final MyService myService;
-
     @Autowired
     public WebFluxApplication(MyService myService) {
         this.myService = myService;
     }
 
+    private final WebClient webClient = WebClient.create();
+
     @GetMapping("/rest")
     public Mono<String> rest(int idx) {
-        return Mono.just("hello");
+        return webClient.get()
+                .uri(URL1, idx)
+                .exchangeToMono(clientResponse -> clientResponse.bodyToMono(String.class))
+                .flatMap(res1 -> webClient.get().uri(URL2, res1).exchangeToMono(c -> c.bodyToMono(String.class)));
     }
 
     public static void main(String[] args) {
