@@ -17,11 +17,17 @@ public class Tobybom2Application {
 	@GetMapping("/")
 	Mono<String> hello() {
 		log.info("pos1");
-		var m = Mono.just("Hello WebFlux") // just 자체는 동기적으로 실행된다. 즉시 데이터를 생산함.
+		var m = Mono.fromSupplier(this::generateHello) // cold type source
 				.doOnNext(log::info)
 				.log();
+		m.subscribe(); // 구독시마다 똑같은 데이터 전송을 해준다.
 		log.info("pos2");
 		return m;
+	}
+
+	private String generateHello() {
+		log.info("method generateHello()");
+		return "Hello Mono";
 	}
 
 	public static void main(String[] args) {
