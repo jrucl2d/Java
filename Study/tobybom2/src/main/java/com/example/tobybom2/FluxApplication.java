@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -31,10 +32,15 @@ public class FluxApplication {
 
     @GetMapping(value = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE) // data를 Stream 형태로 받음
     Flux<Event> events() {
-        var s = Stream.generate(() -> new Event(System.currentTimeMillis(), "value"));
-        return Flux.fromStream(s)
+        final Flux<Event> f1 = Flux
+                .<Event, Long>generate(() -> 1L, (id, sink) -> {
+                    sink.next(new Event(System.currentTimeMillis(), "value" + id));
+                    return id + 1;
+                })
                 .delayElements(Duration.ofSeconds(1))
                 .take(10);
+        final Flux<Long> interval = Flux.interval(Duration.ofSeconds(1L)).take(10);
+        return Flux.zip(f1, interval).map(Tuple2::getT1);
     }
 
     public static void main(String[] args) {
