@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +27,7 @@ public class FluxApplication {
         return Mono.just(events);
     }
 
-    @GetMapping("/events")
+    @GetMapping(value = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE) // data를 Stream 형태로 받음
     Flux<Event> events() {
         // Flux로 여러 데이터를 처리. 각 요소에 대해서 map 등을 사용해서 처리 가능.
         return Flux.just(new Event(1L, "event1"), new Event(2L, "event2"));
