@@ -18,5 +18,7 @@ public class Generic {
         List list1 = new ArrayList<Integer>(); // raw type으로 사용
         List<Integer> ints = Arrays.asList(1,2,3);
         List list2 = ints;
+        List<Integer> ints2 = ints; // 괜찮음
+        List<String> strs = list; // raw type의 integer 리스트를 넣을 수 있게 됨. 심각한 오류
     }
 }
